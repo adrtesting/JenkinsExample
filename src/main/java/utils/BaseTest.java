@@ -24,9 +24,11 @@ import com.google.common.io.Files;
 
 public class BaseTest {
 	
-	public static WebDriver driver;
+	//public static WebDriver driver;
 	
 	public BasePage page;
+	
+	public static ThreadLocal<WebDriver> driver = new ThreadLocal<WebDriver>();
 	
 	@Parameters({"browser"})
 	@BeforeClass
@@ -38,7 +40,7 @@ public class BaseTest {
 //		driver = webdriver.Firefox(executable_path=r'C:\WebDrivers\geckodriver.exe', options=options);
 		
 		System.setProperty("webdriver.chrome.driver", "Drivers/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver", "Drivers/geckdriver.exe");
+		System.setProperty("webdriver.gecko.driver", "Drivers/geckodriver.exe");
 		
 		ChromeOptions option = new ChromeOptions();
 		//option.addArguments("---headless");
@@ -58,19 +60,19 @@ public class BaseTest {
 		if(browser !="" && browser != null) {
 			if(browser.equalsIgnoreCase("chrome")) {
 				
-				driver = new ChromeDriver(option);
+				driver.set(new ChromeDriver(option));
 				
 			} else if(browser.equalsIgnoreCase("firefox")) {
 				
-				driver = new FirefoxDriver(foption);
+				driver.set(new FirefoxDriver(foption));
 			}
 		}
 		
 		
 		
-		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-		driver.get("https://keybooks.ro");
+		driver.get().manage().window().maximize();
+		driver.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+		driver.get().get("https://keybooks.ro");
 		//driver.get("https://the-internet.herokuapp.com/javascript_alerts");
 		page = new BasePage();
 	
@@ -79,7 +81,7 @@ public class BaseTest {
 	@AfterClass
 	public void tearDown() throws InterruptedException {
 		Thread.sleep(5000);
-		driver.quit();
+		driver.get().quit();
 	}
 	
 	@AfterMethod
